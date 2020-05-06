@@ -8,16 +8,21 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table (name = "answermodel")
 @EntityListeners(AuditingEntityListener.class)
 public class AnswerModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String answer;
     private boolean correct;
-    private boolean deleten;
+
+    /*@ManyToOne//(fetch = FetchType.LAZY)
+    @JoinColumn(name ="kurac") //NMG u name nista da stavim
+    private DemoModel kurcina;*/
+
+    private boolean deleted;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -53,9 +58,9 @@ public class AnswerModel {
         this.correct = correct;
     }
 
-    public boolean isDeleten() { return deleten; }
+    public boolean isDeleted() { return deleted; }
 
-    public void setDeleten(boolean deleten) { this.deleten = deleten; }
+    public void setDeleted(boolean deleted) { this.deleted = deleted; }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;

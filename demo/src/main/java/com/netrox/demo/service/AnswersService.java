@@ -2,6 +2,7 @@ package com.netrox.demo.service;
 
 import com.netrox.demo.model.AnswerModel;
 import com.netrox.demo.repository.AnswersRepo;
+import com.netrox.demo.repository.QuestionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,17 +15,19 @@ import java.util.Optional;
 public class AnswersService {
     @Autowired
     private AnswersRepo rep;
+    @Autowired
+    private QuestionRepo repDem;
 
     public AnswerModel getAnswerById(Long id)
     {
-            AnswerModel answerModel= rep.findByIdAndDeleten(id,false);
+            AnswerModel answerModel= rep.findByIdAndDeleted(id,false);
             if(answerModel !=null) return answerModel;
             else return null;
     }
 
     public List<AnswerModel> getAllAnswers()
     {
-        return rep.findAllByDeleten(false);
+        return rep.findAllByDeleted(false);
     }
 
     public AnswerModel saveAnswer (AnswerModel answerModel)
@@ -41,10 +44,10 @@ public class AnswersService {
 
     public ResponseEntity<Long> deleteAnswer (Long id)
     {
-        AnswerModel answerModel = rep.findByIdAndDeleten(id,false);
+        AnswerModel answerModel = rep.findByIdAndDeleted(id,false);
         if(answerModel != null)
         {
-            answerModel.setDeleten(true);
+            answerModel.setDeleted(true);
             rep.save(answerModel); // BITNO BA
             return new ResponseEntity<>(id, HttpStatus.OK);
         }

@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface AnswersRepo extends JpaRepository<AnswerModel,Long> {
-List<AnswerModel> findAllByDeleten(boolean delete);
-AnswerModel findByIdAndDeleten(Long id, boolean delete);
+List<AnswerModel> findAllByDeleted(boolean delete);
+AnswerModel findByIdAndDeleted(Long id, boolean delete);
 }

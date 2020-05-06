@@ -27,19 +27,17 @@ public class AnswersController {
         return answersService.getAnswerById(id);
     }
 
-    @PostMapping
+    /*@PostMapping    RUTA POSTALA NEBITNA JER SE U PITANJE RUTI DODAJE ODGOVOR TACNO ZA TO PITANJE DA SE ADD U LISTU  i automatski se kreira vezom i orm.
     public AnswerModel addAnswer(@RequestBody AnswerModel answerModel )
     {
         return answersService.saveAnswer(answerModel);
-    }
+    }*/
 
     @DeleteMapping(path="/{id}")
     public ResponseEntity<Long> deleteAnswer(@PathVariable(value="id")Long id)
     {
         return answersService.deleteAnswer(id);
     }
-
-
 
 
 }

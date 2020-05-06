@@ -9,29 +9,42 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
+@Table(name = "demomodel")
 @EntityListeners(AuditingEntityListener.class)
 //@JsonIgnoreProperties(value = {"createdAt", "updatedAt"}, allowGetters = true)
-public class DemoModel {
+public class QuestionModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String question;
     private int level;
-    private boolean deleten;
+    private boolean deleted;
 
     @CreatedDate
     private LocalDateTime createdAt;
 
     @CreatedBy
     private String user;
+    //like je odg
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "demomodel_id")
+    private Set<AnswerModel> answers = new HashSet<>();
 
+    public Set<AnswerModel> getAnswers() {
+        return answers;
+    }
 
-    public DemoModel() {
+    public void setAnswers(Set<AnswerModel> answers) {
+        this.answers = answers;
+    }
+
+    public QuestionModel() {
         user = "Sefer Besirovic";
     }
 
@@ -75,11 +88,9 @@ public class DemoModel {
         this.level = level;
     }
 
-    public boolean isDeleten() {
-        return deleten;
-    }
+    public boolean isDeleted() { return deleted; }
 
-    public void setDeleten(boolean deleten) {
-        this.deleten = deleten;
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }
