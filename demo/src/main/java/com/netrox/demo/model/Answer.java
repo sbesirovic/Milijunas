@@ -1,5 +1,7 @@
 package com.netrox.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -8,31 +10,53 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table (name = "answermodel")
+@Table (name = "answer_model")
 @EntityListeners(AuditingEntityListener.class)
-public class AnswerModel {
+@JsonIgnoreProperties(value = {"deleted","createdAt","createdBy","updatedAt","updatedBy"}, allowGetters = false)
+public class Answer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String answer;
     private boolean correct;
-
-    /*@ManyToOne//(fetch = FetchType.LAZY)
-    @JoinColumn(name ="kurac") //NMG u name nista da stavim
-    private DemoModel kurcina;*/
-
-    private boolean deleted;
+    protected boolean deleted;
 
     @CreatedDate
     private LocalDateTime createdAt;
 
     @CreatedBy
-    private String user;
+    private String createdBy;
 
-    public AnswerModel() {
-        user = "Sefer Besirovic";
+    @JsonIgnore
+    public Question getQuestion() {
+        return question;
     }
+
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
+
+
+    @ManyToOne//(fetch = FetchType.LAZY)
+    @JoinColumn(name ="questionModel_id")
+    private Question question;
+
+
+    // constructor
+    public Answer() {
+        createdBy = "Sefer Besirovic";
+    }
+
+    /*public AnswerModel(Long id,String answer, boolean correct,boolean deleted) {
+
+        createdBy = "Sefer Besirovic";
+        createdAt = null;
+        this.id=id;
+        this.answer=answer;
+        this.correct=correct;
+        this.deleted=deleted;
+    }*/
 
     public Long getId() {
         return id;
@@ -70,11 +94,11 @@ public class AnswerModel {
         this.createdAt = createdAt;
     }
 
-    public String getUser() {
-        return user;
+    public String getCreatedBy() {
+        return createdBy;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 }

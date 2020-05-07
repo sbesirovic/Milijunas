@@ -1,7 +1,7 @@
 package com.netrox.demo.controller;
 
-import com.netrox.demo.model.AnswerModel;
-import com.netrox.demo.model.QuestionModel;
+import com.netrox.demo.model.Answer;
+import com.netrox.demo.model.Question;
 import com.netrox.demo.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,25 +19,27 @@ public class QuestionController {
     private QuestionService questionService;
 
     @GetMapping(path = "/{id}")
-    public QuestionModel getQuestionById(@PathVariable(value = "id") Long id)
+    public Question getQuestionById(@PathVariable(value = "id") Long id)
     {
+        System.out.println("id je: "+id);
+
         return questionService.getQuestionById(id);
     }
 
     @GetMapping
-    public List<QuestionModel> getAllQuestions( )
+    public List<Question> getAllQuestions( )
     {
         return questionService.getAllQuestions();
     }
 
     @PostMapping
-    public QuestionModel addQuestion(@RequestBody QuestionModel rbdm )
+    public Question addQuestion(@RequestBody Question rbdm )
     {
       return questionService.saveQuestion(rbdm);
     }
 
     @PostMapping(path="/{id}") // dodano zadnje za foreign key vezu
-    public QuestionModel addQuestion(@PathVariable(value = "id") Long id, @RequestBody AnswerModel aMdm )
+    public Question addAnswer(@PathVariable(value = "id") Long id, @RequestBody Answer aMdm )
     {
         return questionService.saveAnswer(id,aMdm);
     }
@@ -50,19 +52,6 @@ public class QuestionController {
         return questionService.deleteQuestion(customQuery);
     } //System.out.println("customQuery = brand " + customQuery.containsKey("id"));
 
-
-    /*  ###TESTED###
-        @GetMapping
-        public String print( ){
-            return questionService.printService();
-        }
-
-        @GetMapping (path = "/testGet")
-        public String printSEC( ){
-            System.out.println("usao u hello");
-            return "Hello";
-        }
-    */
 }
 
 // PUT I POST RAZLIKE

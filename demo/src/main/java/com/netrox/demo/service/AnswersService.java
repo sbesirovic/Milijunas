@@ -1,6 +1,6 @@
 package com.netrox.demo.service;
 
-import com.netrox.demo.model.AnswerModel;
+import com.netrox.demo.model.Answer;
 import com.netrox.demo.repository.AnswersRepo;
 import com.netrox.demo.repository.QuestionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,39 +16,39 @@ public class AnswersService {
     @Autowired
     private AnswersRepo rep;
     @Autowired
-    private QuestionRepo repDem;
+    private QuestionRepo questionRepo;
 
-    public AnswerModel getAnswerById(Long id)
+    public Answer getAnswerById(Long id)
     {
-            AnswerModel answerModel= rep.findByIdAndDeleted(id,false);
-            if(answerModel !=null) return answerModel;
+            Answer answer = rep.findByIdAndDeletedIsFalse(id);
+            if(answer !=null) return answer;
             else return null;
     }
 
-    public List<AnswerModel> getAllAnswers()
+    public List<Answer> getAllAnswers()
     {
-        return rep.findAllByDeleted(false);
+        return rep.findAllByDeletedIsFalse();
     }
 
-    public AnswerModel saveAnswer (AnswerModel answerModel)
+    public Answer saveAnswer (Answer answer) // Ne koristi se vise jer se odgovor dodaje uz pitanje.
     {
-        if(answerModel.getId() != null)
+        if(answer.getId() != null)
         {
-            Optional<AnswerModel> answerModelOptional = rep.findById(answerModel.getId());
-            if(answerModelOptional.isPresent()) return rep.save(answerModel);
+            Optional<Answer> answerModelOptional = rep.findById(answer.getId());
+            if(answerModelOptional.isPresent()) return rep.save(answer);
             else return null;
         }
-        else return rep.save(answerModel);
-
+        else return rep.save(answer);
     }
 
-    public ResponseEntity<Long> deleteAnswer (Long id)
+    public ResponseEntity<Long> deleteAnswer (Long id) // Ima li sad ovo smisla jer se nece obrisati iz liste odg pitanja ?
     {
-        AnswerModel answerModel = rep.findByIdAndDeleted(id,false);
-        if(answerModel != null)
+        Answer answer = rep.findByIdAndDeletedIsFalse(id);
+        if(answer != null)
         {
-            answerModel.setDeleted(true);
-            rep.save(answerModel); // BITNO BA
+            answer.setDeleted(true);
+            rep.save(answer); // BITNO BA
+            //Optional<QuestionModel> optionalQuestionModel = questionRepo.findById(id);
             return new ResponseEntity<>(id, HttpStatus.OK);
         }
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);

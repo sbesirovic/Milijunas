@@ -1,7 +1,7 @@
 package com.netrox.demo.service;
 
-import com.netrox.demo.model.AnswerModel;
-import com.netrox.demo.model.QuestionModel;
+import com.netrox.demo.model.Answer;
+import com.netrox.demo.model.Question;
 import com.netrox.demo.repository.QuestionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,55 +15,64 @@ import java.util.Optional;
 import static java.lang.Long.parseLong;
 
 @Service
-public class QuestionService {
+public class QuestionService {  // answer service bi samo imao pomocne fje koje bi mu qustion service koristio jer doslovno answer bez servisa nema smisla
     @Autowired
     private QuestionRepo rep;
 
-    public QuestionModel getQuestionById (Long id)
+    public Question getQuestionById (Long id)
     {
-        QuestionModel questionModel =  rep.findByIdAndDeleted(id,false);
-        if(questionModel != null) return questionModel;
-        else return  null; // kasnije ubaciti izuzetke neke kada ih budes ucio ovdje koristiti...
+        //QuestionModel questionModel =  rep.findByIdAndDeletedIsFalse(id);
+        //Test questionModel = rep.findTestWithIdOne();
+        Question question =  rep.findByKurac();
+
+
+        //questionModel.getAnswers().remove(neki koji su sa false) TO BI BIO RUZNI NACIN, TREBA QUERY NAPRAVITI U PITANJIMA!
+        if(question != null) return question;
+        else return  null; // kasnije ubaciti izuzetke neke kada ih budes ucio ovdje koristiti...*/
+
     }
 
-    public List<QuestionModel> getAllQuestions()
+    public List<Question> getAllQuestions()
     {
-        return rep.findAllByDeleted(false);
+        return rep.findAllByDeletedIsFalse();
     }
 
-    public QuestionModel saveQuestion(QuestionModel question)
+    public Question saveQuestion(Question question)
     {
-        if(question.getId()!=null)
+        if(question.getId()!=null)  // post se htio koristiti za apdejt nekog pitanja
         {
-            Optional<QuestionModel> questionModelOptional = rep.findById(question.getId());
+            Optional<Question> questionModelOptional = rep.findById(question.getId());
             if(questionModelOptional.isPresent())  return rep.save(question);
-            else return null;
+            else return null;  // posalje u body za apdejt pitanja nepostojeci id pitanja!
         }
-        else return rep.save(question);
+        else return rep.save(question); // post se htio koristiti za kreiranje novog
     }
 
-    public QuestionModel saveAnswer (Long id, AnswerModel answerModel) // sinoc dodano za FK vezu
+    public Question saveAnswer (Long id, Answer answer) // sinoc dodano za FK vezu
     {
-        QuestionModel questionModel =  rep.findByIdAndDeleted(id,false);
-        questionModel.getAnswers().add(answerModel);
-        return rep.save(questionModel);
+        Question question =  rep.findByIdAndDeletedIsFalse(id);
+        // DODATNI NEW OVAJ IZUZETAK KAD POSALJE ID KOJI NE POSTOJI PITANJE. ( ili je obrisano ?)
+        //eventualno se tu vrsi provjera i da li veci ima previse pitanaj povezanih na njega te da li ima previse tacnih odgovora.
+        question.getAnswers().add(answer);
+        answer.setQuestion(question);
+        return rep.save(question);
     }
 
-    public ResponseEntity<Long> deleteQuestion(Map<String,String> queryParams)
+    public ResponseEntity<Long> deleteQuestion(Map<String,String> queryParams) // sacuvano za primjer rada sa parametrima u ruti.
     {
         Long id = parseLong(queryParams.get("id"));
         // trebalo bi provjeriti da li postoji id parametar bacat izuzetak itd
 
-        Optional<QuestionModel> questionModelOptional = rep.findById(id);
+        Optional<Question> questionModelOptional = rep.findById(id);
         if(questionModelOptional.isPresent())
         {
-            QuestionModel questionModel = questionModelOptional.get();
+            Question question = questionModelOptional.get();
             //rep.delete(demo);  NECEMO TAJ DELETE NEGO SOFT DELETE
-            questionModel.setDeleted(true);
-            rep.save(questionModel);
+            question.setDeleted(true);
+            rep.save(question);
             return new ResponseEntity<>(id, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 

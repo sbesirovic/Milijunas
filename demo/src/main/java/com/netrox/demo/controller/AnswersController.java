@@ -1,6 +1,6 @@
 package com.netrox.demo.controller;
 
-import com.netrox.demo.model.AnswerModel;
+import com.netrox.demo.model.Answer;
 import com.netrox.demo.service.AnswersService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +16,13 @@ public class AnswersController {
     private AnswersService answersService;
 
     @GetMapping
-    public List<AnswerModel> getAllAnswers()
+    public List<Answer> getAllAnswers()
     {
         return answersService.getAllAnswers();
     }
 
     @GetMapping(path="/{id}")
-    public AnswerModel getAnswerById(@PathVariable (value="id") Long id)
+    public Answer getAnswerById(@PathVariable (value="id") Long id)
     {
         return answersService.getAnswerById(id);
     }
